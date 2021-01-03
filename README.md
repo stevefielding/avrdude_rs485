@@ -1,3 +1,18 @@
+## avrdude_rs485
+# Build and install
+```
+sudo apt-get update
+sudo apt-get install -y build-essential bison flex automake libelf-dev libusb-1.0-0-dev libusb-dev libftdi-dev libftdi1
+cd avrdude-6.1
+./configure --enable-linuxgpio
+make
+sudo make install
+```
+# Test
+```
+avrdude -C /home/pi/.arduino15/packages/m328pb/hardware/avr/1.1.4/tools/avrdude.conf -v -patmega328pb -carduino -P/dev/ttyUSB0 -b57600 -Uflash:w:/tmp/arduino_build_937706/Blink.ino.hex:i
+```
+
 See the documentation file for the details.
 
 The latest version of AVRDUDE is always available here:

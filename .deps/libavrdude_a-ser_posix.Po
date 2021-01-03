@@ -82,7 +82,8 @@ libavrdude_a-ser_posix.o: ser_posix.c /usr/include/stdc-predef.h \
  /usr/include/arm-linux-gnueabihf/bits/environments.h \
  /usr/include/arm-linux-gnueabihf/bits/confname.h \
  /usr/include/arm-linux-gnueabihf/bits/getopt_posix.h \
- /usr/include/arm-linux-gnueabihf/bits/getopt_core.h avrdude.h serial.h
+ /usr/include/arm-linux-gnueabihf/bits/getopt_core.h avrdude.h serial.h \
+ /usr/include/wiringPi.h
 
 /usr/include/stdc-predef.h:
 
@@ -283,3 +284,5 @@ libavrdude_a-ser_posix.o: ser_posix.c /usr/include/stdc-predef.h \
 avrdude.h:
 
 serial.h:
+
+/usr/include/wiringPi.h:

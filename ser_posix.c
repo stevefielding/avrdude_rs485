@@ -45,6 +45,14 @@
 #include "avrdude.h"
 #include "serial.h"
 
+#include <wiringPi.h>
+
+// Uses wiringpi numbering. 
+// from terminal "gpio readall" to get mapping to BCM numbers
+const uint8_t RS485_TX_EN = 4;
+const uint8_t RS485_RX_EN_N = 5;
+const uint8_t RS232_RX_EN_N = 0;
+
 long serial_recv_timeout = 5000; /* ms */
 
 struct baud_mapping {
@@ -289,6 +297,17 @@ static int ser_open(char * port, union pinfo pinfo, union filedescriptor *fdp)
     close(fd);
     return -1;
   }
+
+  /*
+   * set rs485 enables and rs232 enable
+   */
+  wiringPiSetup();
+  pinMode(RS485_TX_EN, OUTPUT);
+  pinMode(RS485_RX_EN_N, OUTPUT);
+  pinMode(RS232_RX_EN_N, OUTPUT);
+  digitalWrite(RS485_TX_EN, LOW);
+  digitalWrite(RS485_RX_EN_N, LOW);
+
   return 0;
 }
 
@@ -342,6 +361,8 @@ static int ser_send(union filedescriptor *fd, unsigned char * buf, size_t buflen
       fprintf(stderr, "\n");
   }
 
+  digitalWrite(RS485_TX_EN, HIGH);
+  digitalWrite(RS485_RX_EN_N, HIGH);
   while (len) {
     rc = write(fd->ifd, p, (len > 1024) ? 1024 : len);
     if (rc < 0) {
@@ -352,6 +373,12 @@ static int ser_send(union filedescriptor *fd, unsigned char * buf, size_t buflen
     p += rc;
     len -= rc;
   }
+  uint8_t lsr;
+  do {
+    int r = ioctl(fd->ifd, TIOCSERGETLSR, &lsr);
+  } while (!(lsr & TIOCSER_TEMT));
+  digitalWrite(RS485_TX_EN, LOW);
+  digitalWrite(RS485_RX_EN_N, LOW);
 
   return 0;
 }
