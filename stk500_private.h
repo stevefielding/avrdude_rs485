@@ -100,4 +100,11 @@
 #define Stat_STK_LEDBLINK          0x80  // LED blink ON/OFF,  '1' - Blink
 
 
+// *****************[ RS485 Sync constants ]***************************
+
+#define MULTI_SYNC1               0x79
+#define MULTI_SYNC3               0x46
+#define MULTI_SYNC5               0x25
+
+
 // *****************************[ End Of COMMAND.H ]**************************

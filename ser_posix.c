@@ -307,6 +307,7 @@ static int ser_open(char * port, union pinfo pinfo, union filedescriptor *fdp)
   pinMode(RS232_RX_EN_N, OUTPUT);
   digitalWrite(RS485_TX_EN, LOW);
   digitalWrite(RS485_RX_EN_N, LOW);
+  digitalWrite(RS232_RX_EN_N, HIGH);
 
   return 0;
 }

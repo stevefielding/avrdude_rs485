@@ -89,31 +89,54 @@ int stk500_drain(PROGRAMMER * pgm, int display)
 
 int stk500_getsync(PROGRAMMER * pgm)
 {
-  unsigned char buf[32], resp[32];
+  unsigned char buf[32], buf2[32], resp[32];
   int attempt;
+  unsigned char nodeId;
+  nodeId = 1;  // replace with parameter that is passed in
 
-  /*
-   * get in sync */
-  buf[0] = Cmnd_STK_GET_SYNC;
+#define SER_BUF_FLUSH  
+#ifdef SER_BUF_FLUSH
+ 
+
+  /* multi-sync */
+  buf[0] = MULTI_SYNC1;
   buf[1] = Sync_CRC_EOP;
+  buf[2] = MULTI_SYNC3;
+  buf[3] = Sync_CRC_EOP;
+  buf[4] = MULTI_SYNC5;
+  buf[5] = Sync_CRC_EOP;
+  buf[6] = nodeId;
+  buf[7] = Sync_CRC_EOP;
+
+  buf2[0] = Cmnd_STK_GET_SYNC;
+  buf2[1] = Sync_CRC_EOP;
   
   /*
    * First send and drain a few times to get rid of line noise 
    */
-   
-  stk500_send(pgm, buf, 2);
+  printf("Flushing the receive buffer, and sending the multi-sync\n"); 
+  stk500_send(pgm, buf2, 2);
   stk500_drain(pgm, 0);
-  stk500_send(pgm, buf, 2);
+  stk500_send(pgm, buf, 8);
+  stk500_send(pgm, buf2, 2);
   stk500_drain(pgm, 0);
+  stk500_send(pgm, buf2, 2);
+  stk500_drain(pgm, 0);
+#endif
 
+
+  
+  /*
+   * get in sync */
   for (attempt = 0; attempt < MAX_SYNC_ATTEMPTS; attempt++) {
-    stk500_send(pgm, buf, 2);
+    printf("%s: stk500_getsync() checking for in sync %d\n", progname, attempt+1);
+    stk500_send(pgm, buf2, 2);
     stk500_recv(pgm, resp, 1);
     if (resp[0] == Resp_STK_INSYNC){
       break;
     }
     fprintf(stderr,
-            "%s: stk500_getsync() attempt %d of %d: not in sync: resp=0x%02x\n",
+            "%s: stk500_getsync() rs485 node sync attempt %d of %d: not in sync: resp=0x%02x\n",
             progname, attempt + 1, MAX_SYNC_ATTEMPTS, resp[0]);
   }
   if (attempt == MAX_SYNC_ATTEMPTS) {

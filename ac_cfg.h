@@ -59,7 +59,7 @@
 #define HAVE_LIMITS_H 1
 
 /* Linux sysfs GPIO support enabled */
-#define HAVE_LINUXGPIO 1
+/* #undef HAVE_LINUXGPIO */
 
 /* Define to 1 if you have the <lusb0_usb.h> header file. */
 /* #undef HAVE_LUSB0_USB_H */
