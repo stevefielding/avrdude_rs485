@@ -124,6 +124,7 @@ static void usage(void)
  "  -q                         Quell progress output. -q -q for less.\n"
  "  -l logfile                 Use logfile rather than stderr for diagnostics.\n"
  "  -?                         Display this usage.\n"
+ "  -z nodeId                  Required. RS485 nodeId. 1 to 255.\n"
  "\navrdude version %s, URL: <http://savannah.nongnu.org/projects/avrdude/>\n"
           ,progname, version);
 }
@@ -297,6 +298,9 @@ static void cleanup_main(void)
 /*
  * main routine
  */
+// [FIXME] This is a quick hack to pass nodeId to stk500_getsync()
+// Creating nodeId as a global variable
+unsigned char     nodeId;      /* RS485 node ID */
 int main(int argc, char * argv [])
 {
   int              rc;          /* general return code checking */
@@ -390,6 +394,7 @@ int main(int argc, char * argv [])
     exit(1);
   }
 
+  nodeId        = 1;
   partdesc      = NULL;
   port          = NULL;
   erase         = 0;
@@ -453,9 +458,21 @@ int main(int argc, char * argv [])
   /*
    * process command line arguments
    */
-  while ((ch = getopt(argc,argv,"?b:B:c:C:DeE:Fi:l:np:OP:qstU:uvVx:yY:")) != -1) {
+  int nodeIdTemp;
+  int nodeIdConfigured = 0;
+  while ((ch = getopt(argc,argv,"?b:B:c:C:DeE:Fi:l:np:OP:qstU:uvVx:yY:z:")) != -1) {
 
     switch (ch) {
+      case 'z': /* specify RS485 node id */
+        nodeIdTemp = strtol(optarg, &e, 0);
+	nodeId = (unsigned char) nodeIdTemp;
+        if ((e == optarg) || (*e != 0) || (nodeIdTemp < 1) || (nodeIdTemp > 255)) {
+          fprintf(stderr, "%s: invalid baud rate specified '%s'\n",
+                  progname, optarg);
+          exit(1);
+        }
+	nodeIdConfigured = 1;
+        break;
       case 'b': /* override default programmer baud rate */
         baudrate = strtol(optarg, &e, 0);
         if ((e == optarg) || (*e != 0)) {
@@ -600,6 +617,11 @@ int main(int argc, char * argv [])
         break;
     }
 
+  }
+  if (nodeIdConfigured == 0) {
+    fprintf(stderr, "%s: missing nodeId. eg z:1", progname);
+    usage();
+    exit(0);
   }
 
   if (logfile != NULL) {

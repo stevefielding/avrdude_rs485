@@ -4,13 +4,15 @@
 sudo apt-get update
 sudo apt-get install -y build-essential bison flex automake libelf-dev libusb-1.0-0-dev libusb-dev libftdi-dev libftdi1
 cd avrdude-6.1
-./configure --enable-linuxgpio
+./configure
 make
 sudo make install
 ```
+Added command line option -z \<nodeId\> to pass RS485 nodeId.
+Some problems with -D options that have been added to the Makefile. These are wiped out by configure, and may need to copied back in after ./configure 
 # Test
 ```
-avrdude -C /home/pi/.arduino15/packages/m328pb/hardware/avr/1.1.4/tools/avrdude.conf -v -patmega328pb -carduino -P/dev/ttyUSB0 -b57600 -Uflash:w:/tmp/arduino_build_937706/Blink.ino.hex:i
+avrdude -C /home/pi/.arduino15/packages/m328pb/hardware/avr/1.1.4/tools/avrdude.conf -v -patmega328pb -carduino -P/dev/ttyUSB0 -b57600 -Uflash:w:/tmp/arduino_build_937706/Blink.ino.hex:i -z 1
 ```
 
 See the documentation file for the details.

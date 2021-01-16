@@ -86,13 +86,14 @@ int stk500_drain(PROGRAMMER * pgm, int display)
   return serial_drain(&pgm->fd, display);
 }
 
-
+// [FIXME] Reference nodeId as a global variable. Total hack
+extern unsigned char nodeId;
 int stk500_getsync(PROGRAMMER * pgm)
 {
   unsigned char buf[32], buf2[32], resp[32];
   int attempt;
-  unsigned char nodeId;
-  nodeId = 1;  // replace with parameter that is passed in
+  //unsigned char nodeId;
+  //nodeId = 1;  // replace with parameter that is passed in
 
 #define SER_BUF_FLUSH  
 #ifdef SER_BUF_FLUSH
@@ -112,7 +113,8 @@ int stk500_getsync(PROGRAMMER * pgm)
   buf2[1] = Sync_CRC_EOP;
   
   /*
-   * First send and drain a few times to get rid of line noise 
+   * First send and drain to  get rid of line noise, then send the multi sync, and then two more send and drain
+   * Not sure why, but could not get to work without the send and drain sequence after the multi sync
    */
   printf("Flushing the receive buffer, and sending the multi-sync\n"); 
   stk500_send(pgm, buf2, 2);
