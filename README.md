@@ -1,14 +1,15 @@
 ## avrdude_rs485
 Modified avrdude 6.1 to support RS485 network on Raspberry Pi. Designed for custom PiHat with 
-seperate RS485_TX_EN and RS485_RX_EN. The board also has a RS485, RS232 receive mux.
-You can modify for your hardware by editing the appropriate code in ser_posix.c
-Uses a 6 byte sequence with nodeId to specify the RS485 node. See stk500.c stk500_getsync()
-Added command line option -z \<nodeId\> to pass RS485 nodeId.
+seperate RS485_TX_EN and RS485_RX_EN. The board has a RS485/RS232 receive mux, so the code also drives RS232_RX_EN.
+You can modify for your hardware by editing ser_open() and ser_send() in ser_posix.c
+Uses a 8 byte sequence ending with a  nodeId to specify the RS485 node. See stk500.c:stk500_getsync() and stk500_private.h
+Added command line option -z \<nodeId\> to specify the RS485 nodeId.
+Associated projects: (optiboot)[https://github.com/stevefielding/Wattuino.git] and (eepromGen)[https://github.com/stevefielding/eepromGen.git]
 # Build and install
 ```
 sudo apt-get update
 sudo apt-get install -y build-essential bison flex automake libelf-dev libusb-1.0-0-dev libusb-dev libftdi-dev libftdi1
-cd avrdude-6.1
+cd avrdude_rs485
 ./configure
 touch configure.ac
 touch aclocal.m4
