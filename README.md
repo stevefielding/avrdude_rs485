@@ -9,7 +9,7 @@ make
 sudo make install
 ```
 Added command line option -z \<nodeId\> to pass RS485 nodeId.
-Some problems with -D options that have been added to the Makefile. These are wiped out by configure, and may need to copied back in after ./configure 
+LDFLAGS = -lwiringPi in the Makefile is effectively removed when ./configure is run. You will need to edit Makefile after running ./configure.  
 # Test
 ```
 avrdude -C /home/pi/.arduino15/packages/m328pb/hardware/avr/1.1.4/tools/avrdude.conf -v -patmega328pb -carduino -P/dev/ttyUSB0 -b57600 -Uflash:w:/tmp/arduino_build_937706/Blink.ino.hex:i -z 1
