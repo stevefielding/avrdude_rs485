@@ -1,14 +1,20 @@
 ## avrdude_rs485
+Modified avrdude 6.1 to support RS485 network on Raspberry Pi. Designed for custom PiHat with 
+seperate RS485_TX_EN and RS485_RX_EN. The board also has a RS485, RS232 receive mux.
+You can modify for your hardware by editing the appropriate code in ser_posix.c
+Uses a 6 byte sequence with nodeId to specify the RS485 node. See stk500.c stk500_getsync()
+Added command line option -z \<nodeId\> to pass RS485 nodeId.
 # Build and install
 ```
 sudo apt-get update
 sudo apt-get install -y build-essential bison flex automake libelf-dev libusb-1.0-0-dev libusb-dev libftdi-dev libftdi1
 cd avrdude-6.1
 ./configure
+touch Makefile.in
+*comment*    edit LDFLAGS line in Makefile  LDFLAGS = -lwiringPi
 make
 sudo make install
 ```
-Added command line option -z \<nodeId\> to pass RS485 nodeId.
 LDFLAGS = -lwiringPi in the Makefile is effectively removed when ./configure is run. You will need to edit Makefile after running ./configure.  
 # Test
 ```
