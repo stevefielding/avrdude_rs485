@@ -10,11 +10,15 @@ sudo apt-get update
 sudo apt-get install -y build-essential bison flex automake libelf-dev libusb-1.0-0-dev libusb-dev libftdi-dev libftdi1
 cd avrdude-6.1
 ./configure
+touch configure.ac
+touch aclocal.m4
+touch Makefile.am
 touch Makefile.in
 *comment*    edit LDFLAGS line in Makefile  LDFLAGS = -lwiringPi
 make
 sudo make install
 ```
+Ensure that you touch the files in the order shown above to adjust the time stamps on the files, otherwise automake will decide that it needs to run.
 LDFLAGS = -lwiringPi in the Makefile is effectively removed when ./configure is run. You will need to edit Makefile after running ./configure.  
 # Test
 ```
