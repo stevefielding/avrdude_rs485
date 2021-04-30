@@ -467,7 +467,7 @@ int main(int argc, char * argv [])
         nodeIdTemp = strtol(optarg, &e, 0);
 	nodeId = (unsigned char) nodeIdTemp;
         if ((e == optarg) || (*e != 0) || (nodeIdTemp < 1) || (nodeIdTemp > 255)) {
-          fprintf(stderr, "%s: invalid baud rate specified '%s'\n",
+          fprintf(stderr, "%s: invalid nodeId. Must be between 1 and 255 '%s'\n",
                   progname, optarg);
           exit(1);
         }
